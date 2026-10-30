@@ -184,19 +184,19 @@
     const snap = document.getElementById('snap');
     const status = document.getElementById('status');
 
-    // Configuración para pedir la máxima resolución disponible (hasta 4K)
+    // Configuración Full HD (1920x1080) para equilibrio entre calidad y velocidad
     const highResConstraintsRear = {
       video: {
         facingMode: { ideal: "environment" },
-        width: { ideal: 3840 },
-        height: { ideal: 2160 }
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
       }
     };
 
     const highResConstraintsFallback = {
       video: {
-        width: { ideal: 3840 },
-        height: { ideal: 2160 }
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
       }
     };
 
@@ -221,13 +221,12 @@
       snap.style.opacity = "0.5";
 
       const context = canvas.getContext('2d');
-      // Captura a la resolución nativa real del sensor recibido
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       
-      // Exportación en máxima calidad JPEG (1.0 = sin compresión)
-      const imageData = canvas.toDataURL('image/jpeg', 1.0);
+      // Calidad optimizada a 0.85 (reduce hasta un 70% el peso manteniendo gran nitidez)
+      const imageData = canvas.toDataURL('image/jpeg', 0.85);
 
       const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwnyOWJxLNUpqPV6Syy37VJCxHaaGEG0pX-uo_V4QAxjDDSGn3tvq5A3eeo2-dJ_K35/exec";
 
