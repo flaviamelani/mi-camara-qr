@@ -27,27 +27,49 @@
       justify-content: center;
       padding: 24px 16px 16px 16px;
       position: relative;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
-    /* Mariposas flotantes en segundo plano */
-    .butterfly {
+    /* Estilos de Mariposas Plateadas */
+    .silver-butterfly {
       position: absolute;
-      font-size: 1.6rem;
       pointer-events: none;
-      opacity: 0.7;
-      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
-      animation: float 6s ease-in-out infinite alternate;
       z-index: 1;
+      display: inline-block;
+      color: #e2e8f0;
+      /* Efecto metálico y brillo plateado */
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 15px rgba(203, 213, 225, 0.5));
+      animation: floatMove 8s ease-in-out infinite alternate, flutter 0.6s ease-in-out infinite alternate;
     }
-    .bf-1 { top: 40px; left: 12px; animation-delay: 0s; }
-    .bf-2 { top: 120px; right: 14px; animation-delay: 2s; transform: scaleX(-1); }
-    .bf-3 { bottom: 80px; left: 20px; animation-delay: 4s; }
 
-    @keyframes float {
-      0% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
-      50% { transform: translateY(-12px) rotate(5deg); opacity: 0.85; }
-      100% { transform: translateY(-22px) rotate(-4deg); opacity: 0.6; }
+    /* Posiciones y tamaños variados en el fondo */
+    .bf-1 { top: 4%; left: 8%; font-size: 1.8rem; animation-delay: 0s, 0s; }
+    .bf-2 { top: 15%; right: 10%; font-size: 2.2rem; animation-delay: 1.5s, 0.2s; transform: scaleX(-1); }
+    .bf-3 { top: 45%; left: 4%; font-size: 1.5rem; animation-delay: 3s, 0.4s; }
+    .bf-4 { top: 55%; right: 6%; font-size: 2rem; animation-delay: 2s, 0.1s; }
+    .bf-5 { bottom: 12%; left: 12%; font-size: 2.4rem; animation-delay: 4.5s, 0.3s; }
+    .bf-6 { bottom: 6%; right: 14%; font-size: 1.6rem; animation-delay: 1s, 0.5s; transform: scaleX(-1); }
+
+    /* Animación de trayectoria y vuelo flotante */
+    @keyframes floatMove {
+      0% {
+        transform: translate(0px, 0px) rotate(-5deg);
+        opacity: 0.5;
+      }
+      50% {
+        transform: translate(15px, -25px) rotate(8deg);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translate(-10px, -45px) rotate(-6deg);
+        opacity: 0.6;
+      }
+    }
+
+    /* Animación de aleteo */
+    @keyframes flutter {
+      0% { transform: scaleX(1); }
+      100% { transform: scaleX(0.3); }
     }
 
     .card {
@@ -134,10 +156,13 @@
 </head>
 <body>
 
-  <!-- Elementos decorativos de mariposas -->
-  <div class="butterfly bf-1">🦋</div>
-  <div class="butterfly bf-2">✨</div>
-  <div class="butterfly bf-3">🦋</div>
+  <!-- Mariposas plateadas animadas en fondo -->
+  <div class="silver-butterfly bf-1">🦋</div>
+  <div class="silver-butterfly bf-2">🦋</div>
+  <div class="silver-butterfly bf-3">🦋</div>
+  <div class="silver-butterfly bf-4">🦋</div>
+  <div class="silver-butterfly bf-5">🦋</div>
+  <div class="silver-butterfly bf-6">🦋</div>
 
   <div class="card">
     <h2>Sacá tu foto 🦋</h2>
@@ -159,10 +184,18 @@
     const status = document.getElementById('status');
 
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-      .then(stream => { video.srcObject = stream; })
+      .then(stream => { 
+        video.srcObject = stream; 
+      })
       .catch(() => {
         navigator.mediaDevices.getUserMedia({ video: true })
-          .then(stream => { video.srcObject = stream; });
+          .then(stream => { 
+            video.srcObject = stream; 
+          })
+          .catch(err => {
+            status.innerText = "No se pudo acceder a la cámara. Por favor permite los permisos.";
+            console.error("Error al acceder a la cámara: ", err);
+          });
       });
 
     snap.addEventListener('click', () => {
@@ -193,4 +226,11 @@
       .catch(err => {
         status.innerText = "Error al guardar la foto.";
         snap.disabled = false;
-        snap.style.opacity =
+        snap.style.opacity = "1";
+        console.error(err);
+      });
+    });
+  </script>
+
+</body>
+</html>
