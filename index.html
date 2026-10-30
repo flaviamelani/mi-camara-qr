@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Captura de Foto</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; background: #f4f4f9; }
+    video, canvas { width: 100%; max-width: 400px; border-radius: 8px; }
+    button { padding: 12px 24px; font-size: 16px; margin-top: 15px; border-radius: 6px; border: none; background: #007bff; color: white; font-weight: bold; cursor: pointer; }
+    #status { margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h2>Sacá tu foto</h2>
+  <video id="video" autoplay playsinline></video><br>
+  <button id="snap">Tomar y Guardar Foto</button>
+  <p id="status"></p>
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const snap = document.getElementById('snap');
+    const status = document.getElementById('status');
+
+    // Pedir permiso para abrir la cámara del celular
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then(stream => { video.srcObject = stream; })
+      .catch(err => {
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(stream => { video.srcObject = stream; });
+      });
+
+    // Evento al tocar el botón
+    snap.addEventListener('click', () => {
+      status.innerText = "Guardando foto en Google Drive...";
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      const imageData = canvas.toDataURL('image/jpeg');
+
+      // AQUÍ PEGAS TU URL EN LUGAR DE LA DE EJEMPLO:
+      const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwnyOWJxLNUpqPV6Syy37VJCxHaaGEG0pX-uo_V4QAxjDDSGn3tvq5A3eeo2-dJ_K35/exec";
+
+      fetch(WEB_APP_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Evita bloqueos de CORS entre el navegador y Google
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ image: imageData })
+      })
+      .then(() => {
+        status.innerText = "¡Foto guardada con éxito en Google Drive!";
+      })
+      .catch(err => {
+        status.innerText = "Error al guardar la foto.";
+        console.error(err);
+      });
+    });
+  </script>
+
+</body>
+</html>
