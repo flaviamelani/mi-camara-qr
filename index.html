@@ -4,20 +4,121 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Captura de Foto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; background: #f4f4f9; }
-    video, canvas { width: 100%; max-width: 400px; border-radius: 8px; }
-    button { padding: 12px 24px; font-size: 16px; margin-top: 15px; border-radius: 6px; border: none; background: #007bff; color: white; font-weight: bold; cursor: pointer; }
-    #status { margin-top: 15px; font-weight: bold; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #08080a;
+      /* Fondo negro profundo con destellos y brillo central */
+      background-image: 
+        radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 20% 80%, rgba(200, 200, 225, 0.08) 0%, transparent 35%),
+        radial-gradient(circle at 80% 80%, rgba(200, 200, 225, 0.08) 0%, transparent 35%);
+      color: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: rgba(18, 18, 22, 0.85);
+      /* Borde con degradado metálico plateado */
+      border: 1px solid transparent;
+      border-image: linear-gradient(135deg, #e2e8f0, #475569, #cbd5e1, #1e293b) 1;
+      border-radius: 20px;
+      padding: 28px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.05), inset 0 0 15px rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+    h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+      /* Texto en degradado plateado brillante */
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+    p.subtitle {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+      margin-bottom: 22px;
+    }
+    .video-container {
+      position: relative;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.2);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+      background: #000;
+      aspect-ratio: 3 / 4;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Botón plateado metálico */
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 22px;
+      border-radius: 10px;
+      border: 1px solid #ffffff;
+      background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 50%, #64748b 100%);
+      color: #0f172a;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    button:active {
+      transform: scale(0.98);
+      background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 50%, #475569 100%);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+    }
+    #status {
+      margin-top: 16px;
+      font-size: 0.88rem;
+      color: #e2e8f0;
+      min-height: 20px;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <body>
 
-  <h2>Sacá tu foto</h2>
-  <video id="video" autoplay playsinline></video><br>
-  <button id="snap">Tomar y Guardar Foto</button>
-  <p id="status"></p>
-  <canvas id="canvas" style="display:none;"></canvas>
+  <div class="card">
+    <h2>Sacá tu foto</h2>
+    <p class="subtitle">Enfocá y capturá el momento</p>
+    
+    <div class="video-container">
+      <video id="video" autoplay playsinline></video>
+    </div>
+
+    <button id="snap">Tomar y Guardar Foto</button>
+    <p id="status"></p>
+    <canvas id="canvas" style="display:none;"></canvas>
+  </div>
 
   <script>
     const video = document.getElementById('video');
@@ -25,17 +126,18 @@
     const snap = document.getElementById('snap');
     const status = document.getElementById('status');
 
-    // Pedir permiso para abrir la cámara del celular
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
       .then(stream => { video.srcObject = stream; })
-      .catch(err => {
+      .catch(() => {
         navigator.mediaDevices.getUserMedia({ video: true })
           .then(stream => { video.srcObject = stream; });
       });
 
-    // Evento al tocar el botón
     snap.addEventListener('click', () => {
       status.innerText = "Guardando foto en Google Drive...";
+      snap.disabled = true;
+      snap.style.opacity = "0.5";
+
       const context = canvas.getContext('2d');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -43,20 +145,23 @@
       
       const imageData = canvas.toDataURL('image/jpeg');
 
-      // AQUÍ PEGAS TU URL EN LUGAR DE LA DE EJEMPLO:
       const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwnyOWJxLNUpqPV6Syy37VJCxHaaGEG0pX-uo_V4QAxjDDSGn3tvq5A3eeo2-dJ_K35/exec";
 
       fetch(WEB_APP_URL, {
         method: 'POST',
-        mode: 'no-cors', // Evita bloqueos de CORS entre el navegador y Google
+        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ image: imageData })
       })
       .then(() => {
-        status.innerText = "¡Foto guardada con éxito en Google Drive!";
+        status.innerText = "¡Foto guardada con éxito!";
+        snap.disabled = false;
+        snap.style.opacity = "1";
       })
       .catch(err => {
         status.innerText = "Error al guardar la foto.";
+        snap.disabled = false;
+        snap.style.opacity = "1";
         console.error(err);
       });
     });
