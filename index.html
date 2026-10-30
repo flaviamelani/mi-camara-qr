@@ -23,11 +23,36 @@
       color: #f1f5f9;
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      padding: 16px;
+      padding: 24px 16px 16px 16px;
+      position: relative;
+      overflow-x: hidden;
     }
+
+    /* Mariposas flotantes en segundo plano */
+    .butterfly {
+      position: absolute;
+      font-size: 1.6rem;
+      pointer-events: none;
+      opacity: 0.7;
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+      animation: float 6s ease-in-out infinite alternate;
+      z-index: 1;
+    }
+    .bf-1 { top: 40px; left: 12px; animation-delay: 0s; }
+    .bf-2 { top: 120px; right: 14px; animation-delay: 2s; transform: scaleX(-1); }
+    .bf-3 { bottom: 80px; left: 20px; animation-delay: 4s; }
+
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+      50% { transform: translateY(-12px) rotate(5deg); opacity: 0.85; }
+      100% { transform: translateY(-22px) rotate(-4deg); opacity: 0.6; }
+    }
+
     .card {
+      position: relative;
+      z-index: 2;
       background: rgba(18, 18, 22, 0.9);
       border: 1px solid rgba(226, 232, 240, 0.3);
       border-radius: 20px;
@@ -38,6 +63,7 @@
       backdrop-filter: blur(10px);
       text-align: center;
     }
+    
     h2 {
       font-family: 'Cinzel', serif;
       font-size: 1.4rem;
@@ -49,17 +75,18 @@
       -webkit-text-fill-color: transparent;
       text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
+    
     p.subtitle {
       font-size: 0.8rem;
       color: #94a3b8;
       letter-spacing: 0.5px;
       margin-bottom: 16px;
     }
-    /* Contenedor adaptado a la pantalla vertical de celular */
+
     .video-container {
       position: relative;
       width: 100%;
-      max-height: 55vh; /* Limita la altura al 55% de la pantalla del celular */
+      max-height: 55vh;
       border-radius: 14px;
       overflow: hidden;
       border: 1px solid rgba(226, 232, 240, 0.25);
@@ -68,11 +95,13 @@
       aspect-ratio: 3 / 4;
       margin: 0 auto;
     }
+
     video {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* Recorta proporcionalmente sin estirar la imagen */
+      object-fit: cover;
     }
+
     button {
       width: 100%;
       padding: 14px;
@@ -89,10 +118,12 @@
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
       transition: all 0.2s ease;
     }
+
     button:active {
       transform: scale(0.98);
       background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 50%, #475569 100%);
     }
+
     #status {
       margin-top: 12px;
       font-size: 0.85rem;
@@ -103,8 +134,13 @@
 </head>
 <body>
 
+  <!-- Elementos decorativos de mariposas -->
+  <div class="butterfly bf-1">🦋</div>
+  <div class="butterfly bf-2">✨</div>
+  <div class="butterfly bf-3">🦋</div>
+
   <div class="card">
-    <h2>Sacá tu foto</h2>
+    <h2>Sacá tu foto 🦋</h2>
     <p class="subtitle">Enfocá y capturá el momento</p>
     
     <div class="video-container">
@@ -157,11 +193,4 @@
       .catch(err => {
         status.innerText = "Error al guardar la foto.";
         snap.disabled = false;
-        snap.style.opacity = "1";
-        console.error(err);
-      });
-    });
-  </script>
-
-</body>
-</html>
+        snap.style.opacity =
